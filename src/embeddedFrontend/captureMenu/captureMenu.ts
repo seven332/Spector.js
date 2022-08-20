@@ -92,7 +92,7 @@ export class CaptureMenu {
             // Defer to ensure the log displays.
             setTimeout(() => {
                 this.onCaptureRequested.trigger(currentCanvasInformation);
-            }, 200);
+            }, 3000);
         });
         this.actionsComponent.onPauseRequested.add(() => {
             this.onPauseRequested.trigger(this.getSelectedCanvasInformation());

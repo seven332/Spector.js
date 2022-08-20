@@ -110,7 +110,7 @@ export class Spector {
             this.captureMenu.onPlayNextFrameRequested.add(this.playNextFrame, this);
             this.captureMenu.onCaptureRequested.add((info) => {
                 if (info) {
-                    this.captureCanvas(info.ref);
+                    this.captureCanvas(info.ref, 0, false, true);
                 }
             }, this);
 
