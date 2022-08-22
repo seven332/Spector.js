@@ -472,7 +472,7 @@ export class ResultView {
                 return json.toFixed(0);
             }
 
-            return json.toFixed(4);
+            return json.toString();
         }
 
         if (typeof json === "string") {
