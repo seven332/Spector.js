@@ -85,14 +85,24 @@ export class CaptureMenu {
 
         this.actionsComponent.onCaptureRequested.add(() => {
             const currentCanvasInformation = this.getSelectedCanvasInformation();
-            if (currentCanvasInformation) {
-                this.updateMenuStateLog(LogLevel.info, CaptureMenu.PleaseWaitHelpText, true);
+            if (!currentCanvasInformation) {
+                return;
             }
 
-            // Defer to ensure the log displays.
-            setTimeout(() => {
-                this.onCaptureRequested.trigger(currentCanvasInformation);
-            }, 3000);
+            const waitOrCapture = (second: number) => {
+                if (second > 0) {
+                    this.updateMenuStateLog(LogLevel.info, `${second}...`, true);
+                    setTimeout(() => {
+                        waitOrCapture(second - 1);
+                    }, 1000);
+                } else {
+                    this.updateMenuStateLog(LogLevel.info, CaptureMenu.PleaseWaitHelpText, true);
+                    setTimeout(() => {
+                        this.onCaptureRequested.trigger(currentCanvasInformation);
+                    }, 1000);
+                }
+            };
+            waitOrCapture(3);
         });
         this.actionsComponent.onPauseRequested.add(() => {
             this.onPauseRequested.trigger(this.getSelectedCanvasInformation());
