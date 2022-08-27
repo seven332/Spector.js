@@ -9,7 +9,7 @@ import { ContextSpy } from "./backend/spies/contextSpy";
 import { TimeSpy } from "./backend/spies/timeSpy";
 import { CanvasSpy } from "./backend/spies/canvasSpy";
 import { Program } from "./backend/webGlObjects/webGlObjects";
-import { CaptureMenu } from "./embeddedFrontend/captureMenu/captureMenu";
+import { CaptureMenu, CaptureType } from "./embeddedFrontend/captureMenu/captureMenu";
 import { ResultView } from "./embeddedFrontend/resultView/resultView";
 
 const CAPTURE_LIMIT = 10000; // Limit command count to 10000 record (to be kept in sync with the documentation)
@@ -108,9 +108,19 @@ export class Spector {
             this.captureMenu.onPauseRequested.add(this.pause, this);
             this.captureMenu.onPlayRequested.add(this.play, this);
             this.captureMenu.onPlayNextFrameRequested.add(this.playNextFrame, this);
-            this.captureMenu.onCaptureRequested.add((info) => {
-                if (info) {
-                    this.captureCanvas(info.ref, 0, false, true);
+            this.captureMenu.onCaptureRequested.add((paramaters) => {
+                if (paramaters) {
+                    switch (paramaters.captureType) {
+                        case CaptureType.Full:
+                            this.captureCanvas(paramaters.canvasInformation.ref, 0, false, true);
+                            break;
+                        case CaptureType.Balance:
+                            this.captureCanvas(paramaters.canvasInformation.ref, 0, false, false);
+                            break;
+                        case CaptureType.Quick:
+                            this.captureCanvas(paramaters.canvasInformation.ref, 0, true, false);
+                            break;
+                    }
                 }
             }, this);
 

@@ -17,6 +17,17 @@ export interface ICanvasInformation {
     ref: any;
 }
 
+export enum CaptureType {
+    Full,
+    Balance,
+    Quick,
+}
+
+export interface ICaptureParamaters {
+    readonly captureType: CaptureType;
+    readonly canvasInformation: ICanvasInformation;
+}
+
 export interface ICaptureMenuOptions {
     readonly rootPlaceHolder?: Element;
     readonly canvas?: HTMLCanvasElement;
@@ -34,7 +45,7 @@ export class CaptureMenu {
     public static PleaseWaitHelpText = "Capturing, be patient (this can take up to 3 minutes)...";
 
     public readonly onCanvasSelected: Observable<ICanvasInformation>;
-    public readonly onCaptureRequested: Observable<ICanvasInformation>;
+    public readonly onCaptureRequested: Observable<ICaptureParamaters>;
     public readonly onPauseRequested: Observable<ICanvasInformation>;
     public readonly onPlayRequested: Observable<ICanvasInformation>;
     public readonly onPlayNextFrameRequested: Observable<ICanvasInformation>;
@@ -62,7 +73,7 @@ export class CaptureMenu {
         this.isTrackingCanvas = false;
 
         this.onCanvasSelected = new Observable<ICanvasInformation>();
-        this.onCaptureRequested = new Observable<ICanvasInformation>();
+        this.onCaptureRequested = new Observable<ICaptureParamaters>();
         this.onPauseRequested = new Observable<ICanvasInformation>();
         this.onPlayRequested = new Observable<ICanvasInformation>();
         this.onPlayNextFrameRequested = new Observable<ICanvasInformation>();
@@ -84,8 +95,8 @@ export class CaptureMenu {
         this.fpsStateId = this.mvx.addChildState(this.rootStateId, 0, this.fpsCounterComponent);
 
         this.actionsComponent.onCaptureRequested.add(() => {
-            const currentCanvasInformation = this.getSelectedCanvasInformation();
-            if (!currentCanvasInformation) {
+            const captureParamater = this.getCaptureParamater();
+            if (!captureParamater) {
                 return;
             }
 
@@ -98,7 +109,7 @@ export class CaptureMenu {
                 } else {
                     this.updateMenuStateLog(LogLevel.info, CaptureMenu.PleaseWaitHelpText, true);
                     setTimeout(() => {
-                        this.onCaptureRequested.trigger(currentCanvasInformation);
+                        this.onCaptureRequested.trigger(captureParamater);
                     }, 1000);
                 }
             };
@@ -150,6 +161,24 @@ export class CaptureMenu {
     public getSelectedCanvasInformation(): ICanvasInformation {
         const canvasListState = this.mvx.getGenericState<ICanvasListComponentState>(this.canvasListStateId);
         return canvasListState.currentCanvasInformation;
+    }
+
+    public getCaptureParamater(): ICaptureParamaters | undefined {
+        const canvasInformation = this.getSelectedCanvasInformation();
+        if (!canvasInformation) {
+            return undefined;
+        }
+
+        let captureType = CaptureType.Full;
+        if ((document.getElementById("captureMenuConfigFull") as HTMLInputElement).checked) {
+            captureType = CaptureType.Full;
+        } else if ((document.getElementById("captureMenuConfigBalance") as HTMLInputElement).checked) {
+            captureType = CaptureType.Balance;
+        } else if ((document.getElementById("captureMenuConfigQuick") as HTMLInputElement).checked) {
+            captureType = CaptureType.Quick;
+        }
+
+        return {captureType, canvasInformation};
     }
 
     public trackPageCanvases(): void {
