@@ -4,6 +4,7 @@ import { IFunctionInformation } from "../types/functionInformation";
 import { ICommandCapture, CommandCaptureStatus } from "../../shared/capture/commandCapture";
 import { WebGlConstants } from "../types/webglConstants";
 import { WebGlObjects } from "../webGlObjects/baseWebGlObject";
+import { kCanvasConfig } from "../../embeddedFrontend/captureMenu/captureMenu";
 
 export abstract class BaseCommand {
     protected abstract get spiedCommandName(): string;
@@ -39,9 +40,9 @@ export abstract class BaseCommand {
 
         for (let i = 0; i < commandCapture.commandArguments.length; i++) {
             const argument = commandCapture.commandArguments[i];
-            // if (argument && argument.length && argument.length > 50) {
-            //     commandCapture.commandArguments[i] = "Array Length: " + argument.length;
-            // }
+            if (argument && argument.length && argument.length > kCanvasConfig.maxArrayLength) {
+                commandCapture.commandArguments[i] = "Array Length: " + argument.length;
+            }
         }
 
         if (commandCapture.commandArguments) {

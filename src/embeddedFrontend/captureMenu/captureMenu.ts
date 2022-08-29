@@ -8,7 +8,15 @@ import { CanvasListItemComponent } from "./canvasListItemComponent";
 import { CaptureMenuActionsComponent } from "./captureMenuActionsComponent";
 import { CanvasListComponent, ICanvasListComponentState } from "./canvasListComponent";
 import { FpsCounterComponent } from "./fpsCounterComponent";
-import { LogLevel } from "../../shared/utils/logger";
+import { LogLevel, Logger } from "../../shared/utils/logger";
+
+export interface ICanvasConfig {
+    maxArrayLength: number;
+}
+
+export const kCanvasConfig = {
+    maxArrayLength: 50,
+};
 
 export interface ICanvasInformation {
     id: string;
@@ -100,6 +108,8 @@ export class CaptureMenu {
                 return;
             }
 
+            this.updateMaxArrayLength();
+
             const waitOrCapture = (second: number) => {
                 if (second > 0) {
                     this.updateMenuStateLog(LogLevel.info, `${second}...`, true);
@@ -179,6 +189,11 @@ export class CaptureMenu {
         }
 
         return {captureType, canvasInformation};
+    }
+
+    public updateMaxArrayLength() {
+        const value = (document.getElementById("captureMenuConfigLength") as HTMLInputElement).value;
+        kCanvasConfig.maxArrayLength = parseInt(value, 10) || 50;
     }
 
     public trackPageCanvases(): void {

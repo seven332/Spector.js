@@ -25,6 +25,7 @@ export class CaptureMenuComponent extends BaseComponent<ICaptureMenuComponentSta
                 <label for="captureMenuConfigBalance">Balance</label>
                 <input type="radio" id="captureMenuConfigQuick" name="config" value="quick">
                 <label for="captureMenuConfigQuick">Quick</label>
+                <input type="text" id="captureMenuConfigLength" name="length" size="18" placeholder="Max Array Size: 50" autofocus="false">
             </div>
         </div>`;
 
